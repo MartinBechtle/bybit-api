@@ -77,12 +77,12 @@ type Ticker struct {
 	Price1HPcnt          float64   `json:"price_1h_pcnt,string"`
 	MarkPrice            float64   `json:"mark_price,string"`
 	IndexPrice           float64   `json:"index_price,string"`
-	OpenInterest         int       `json:"open_interest"`
+	OpenInterest         float64   `json:"open_interest"`
 	OpenValue            float64   `json:"open_value,string"`
 	TotalTurnover        float64   `json:"total_turnover,string"`
 	Turnover24H          float64   `json:"turnover_24h,string"`
-	TotalVolume          int64     `json:"total_volume"`
-	Volume24H            int64     `json:"volume_24h"`
+	TotalVolume          float64   `json:"total_volume"`
+	Volume24H            float64   `json:"volume_24h"`
 	FundingRate          float64   `json:"funding_rate,string"`
 	PredictedFundingRate float64   `json:"predicted_funding_rate,string"`
 	NextFundingTime      time.Time `json:"next_funding_time"`
@@ -239,8 +239,8 @@ type OrderListResult struct {
 
 // Order ...
 type Order struct {
-	OrderID string `json:"order_id"`
-	StopOrderID     string       `json:"stop_order_id"`
+	OrderID     string  `json:"order_id"`
+	StopOrderID string  `json:"stop_order_id"`
 	UserID      int     `json:"user_id"`
 	Symbol      string  `json:"symbol"`
 	Side        string  `json:"side"`

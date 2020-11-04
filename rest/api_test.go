@@ -1,10 +1,11 @@
 package rest
 
 import (
-	"github.com/stretchr/testify/assert"
 	"log"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // 开发电报群:
@@ -101,7 +102,7 @@ func TestByBit_GetTickers(t *testing.T) {
 	b := newByBit()
 	tickers, err := b.GetTickers()
 	if err != nil {
-		t.Error()
+		t.Error("error in GetTickers", err)
 		return
 	}
 	for _, v := range tickers {
@@ -334,7 +335,8 @@ func TestByBit_GetLeverages(t *testing.T) {
 
 func TestByBit_SetLeverage(t *testing.T) {
 	b := newByBit()
-	b.SetLeverage(3, "BTCUSD")
+	err := b.SetLeverage(3, "BTCUSD")
+	assert.NoError(t, err)
 }
 
 func TestByBit_GetPositions(t *testing.T) {
