@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 func (b *ByBit) CreateOrderV2(side string, orderType string, price float64,
@@ -36,6 +37,43 @@ func (b *ByBit) CreateOrderV2(side string, orderType string, price float64,
 	}
 	var resp []byte
 	resp, err = b.SignedRequest(http.MethodPost, "v2/private/order/create", params, &cResult)
+	if err != nil {
+		return
+	}
+	if cResult.RetCode != 0 {
+		err = fmt.Errorf("%v body: [%v]", cResult.RetMsg, string(resp))
+		return
+	}
+	result = cResult.Result
+	return
+}
+
+func (b *ByBit) CreateOrderLinear(side string, orderType string, price float64,
+	qty float64, timeInForce string, takeProfit float64, stopLoss float64, reduceOnly bool,
+	closeOnTrigger bool, orderLinkID string, symbol string) (result OrderV2, err error) {
+	var cResult CreateOrderV2Result
+	params := map[string]interface{}{}
+	params["side"] = side
+	params["symbol"] = symbol
+	params["order_type"] = orderType
+	params["close_on_trigger"] = closeOnTrigger
+	params["reduce_only"] = reduceOnly
+	params["qty"] = strconv.FormatFloat(qty, 'f', 6, 64)
+	if price > 0 {
+		params["price"] = price
+	}
+	params["time_in_force"] = timeInForce
+	if takeProfit > 0 {
+		params["take_profit"] = takeProfit
+	}
+	if stopLoss > 0 {
+		params["stop_loss"] = stopLoss
+	}
+	if orderLinkID != "" {
+		params["order_link_id"] = orderLinkID
+	}
+	var resp []byte
+	resp, err = b.SignedRequest(http.MethodPost, "/private/linear/order/create", params, &cResult)
 	if err != nil {
 		return
 	}
