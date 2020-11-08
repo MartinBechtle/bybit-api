@@ -100,13 +100,13 @@ func (b *ByBit) SetLeverage(leverage int, symbol string) (err error) {
 	return
 }
 
-// GetPositions 获取我的仓位
+// GetPositions get inverse perpetual swap positions (eg: BTCUSD)
 func (b *ByBit) GetPositions() (result []Position, err error) {
 	var r PositionListResult
 
 	params := map[string]interface{}{}
 	var resp []byte
-	resp, err = b.SignedRequest(http.MethodGet, "position/list", params, &r)
+	resp, err = b.SignedRequest(http.MethodGet, "v2/private/position/list", params, &r)
 	if err != nil {
 		return
 	}
@@ -119,6 +119,79 @@ func (b *ByBit) GetPositions() (result []Position, err error) {
 		result = append(result, b.convertPositionV1(v))
 	}
 	return
+}
+
+// GetLinearPositions get linear positions (eg: BTCUSDT)
+func (b *ByBit) GetLinearPositions() (result []Position, err error) {
+	var r PositionListLinearResult
+
+	params := map[string]interface{}{}
+	var resp []byte
+	resp, err = b.SignedRequest(http.MethodGet, "private/linear/position/list", params, &r)
+	if err != nil {
+		return
+	}
+	if r.RetCode != 0 {
+		err = fmt.Errorf("%v body: [%v]", r.RetMsg, string(resp))
+		return
+	}
+
+	for _, v := range r.Result {
+		result = append(result, b.convertPositionLinear(v))
+	}
+	return
+}
+
+// GetPosition get an inverse perpetual swap position (eg: BTCUSD)
+func (b *ByBit) GetPosition(symbol string) (result Position, err error) {
+	var r GetPositionResult
+
+	params := map[string]interface{}{}
+	params["symbol"] = symbol
+	var resp []byte
+	resp, err = b.SignedRequest(http.MethodGet, "v2/private/position/list", params, &r)
+	if err != nil {
+		return
+	}
+	if r.RetCode != 0 {
+		err = fmt.Errorf("%v body: [%v]", r.RetMsg, string(resp))
+		return
+	}
+	result = r.Result
+	return
+}
+
+// GetLinearPosition get the buy and sell positions for a linear asset (eg: BTCUSDT)
+func (b *ByBit) GetLinearPosition(symbol string) (longPosition Position, shortPosition Position, err error) {
+	var r PositionListResult
+
+	params := map[string]interface{}{}
+	params["symbol"] = symbol
+	var resp []byte
+	resp, err = b.SignedRequest(http.MethodGet, "private/linear/position/list", params, &r)
+	if err != nil {
+		return
+	}
+	if r.RetCode != 0 {
+		err = fmt.Errorf("%v body: [%v]", r.RetMsg, string(resp))
+		return
+	}
+	if len(r.Result) != 2 {
+		err = fmt.Errorf("unexpected result from GetLinearPosition: 2 positions expected, instead got %d ", len(r.Result))
+		return
+	}
+	if r.Result[0].Side == "Sell" {
+		longPosition = b.convertPositionV1(r.Result[1])
+		shortPosition = b.convertPositionV1(r.Result[0])
+	} else {
+		longPosition = b.convertPositionV1(r.Result[0])
+		shortPosition = b.convertPositionV1(r.Result[1])
+	}
+	return
+}
+
+func (b *ByBit) convertPositionLinear(position PositionLinear) (result Position) {
+	return b.convertPositionV1(position.Result)
 }
 
 func (b *ByBit) convertPositionV1(position PositionV1) (result Position) {
@@ -154,25 +227,6 @@ func (b *ByBit) convertPositionV1(position PositionV1) (result Position) {
 	result.CreatedAt = position.CreatedAt
 	result.UpdatedAt = position.UpdatedAt
 	result.UnrealisedPnl = position.UnrealisedPnl
-	return
-}
-
-// GetPosition 获取我的仓位
-func (b *ByBit) GetPosition(symbol string) (result Position, err error) {
-	var r GetPositionResult
-
-	params := map[string]interface{}{}
-	params["symbol"] = symbol
-	var resp []byte
-	resp, err = b.SignedRequest(http.MethodGet, "v2/private/position/list", params, &r)
-	if err != nil {
-		return
-	}
-	if r.RetCode != 0 {
-		err = fmt.Errorf("%v body: [%v]", r.RetMsg, string(resp))
-		return
-	}
-	result = r.Result
 	return
 }
 

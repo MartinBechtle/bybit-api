@@ -102,7 +102,7 @@ type TradingRecord struct {
 	ID     int       `json:"id"`
 	Symbol string    `json:"symbol"`
 	Price  float64   `json:"price"`
-	Qty    int       `json:"qty"`
+	Qty    float64   `json:"qty"`
 	Side   string    `json:"side"`
 	Time   time.Time `json:"time"`
 }
@@ -117,8 +117,8 @@ type GetTradingRecordsResult struct {
 }
 
 type LeverageFilter struct {
-	MinLeverage  int     `json:"min_leverage"`
-	MaxLeverage  int     `json:"max_leverage"`
+	MinLeverage  float64 `json:"min_leverage"`
+	MaxLeverage  float64 `json:"max_leverage"`
 	LeverageStep float64 `json:"leverage_step,string"`
 }
 
@@ -129,16 +129,16 @@ type PriceFilter struct {
 }
 
 type LotSizeFilter struct {
-	MaxTradingQty int `json:"max_trading_qty"`
-	MinTradingQty int `json:"min_trading_qty"`
-	QtyStep       int `json:"qty_step"`
+	MaxTradingQty float64 `json:"max_trading_qty"`
+	MinTradingQty float64 `json:"min_trading_qty"`
+	QtyStep       float64 `json:"qty_step"`
 }
 
 type SymbolInfo struct {
 	Name           string         `json:"name"`
 	BaseCurrency   string         `json:"base_currency"`
 	QuoteCurrency  string         `json:"quote_currency"`
-	PriceScale     int            `json:"price_scale"`
+	PriceScale     float64        `json:"price_scale"`
 	TakerFee       float64        `json:"taker_fee,string"`
 	MakerFee       float64        `json:"maker_fee,string"`
 	LeverageFilter LeverageFilter `json:"leverage_filter"`
@@ -316,7 +316,11 @@ type GetLeverageResult struct {
 }
 
 type LeverageItem struct {
-	Leverage int `json:"leverage"`
+	Leverage float64 `json:"leverage"`
+}
+
+type PositionLinear struct {
+	Result PositionV1 `json:"data"`
 }
 
 type PositionV1 struct {
@@ -397,6 +401,12 @@ type PositionListResult struct {
 	BaseResult
 	ExtInfo interface{}  `json:"ext_info"`
 	Result  []PositionV1 `json:"result"`
+}
+
+type PositionListLinearResult struct {
+	BaseResult
+	ExtInfo interface{}      `json:"ext_info"`
+	Result  []PositionLinear `json:"result"`
 }
 
 type GetPositionResult struct {

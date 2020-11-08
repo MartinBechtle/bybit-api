@@ -88,6 +88,7 @@ func (b *ByBit) GetKLine(symbol string, interval string, from int64, limit int) 
 	return
 }
 
+// GetTickers retrieves both inverse and linear swap tickers
 func (b *ByBit) GetTickers() (result []Ticker, err error) {
 	// https://api-testnet.bybit.com/v2/public/tickers
 	var ret GetTickersResult

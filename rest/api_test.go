@@ -2,22 +2,40 @@ package rest
 
 import (
 	"log"
+	"os"
 	"testing"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 )
 
 // 开发电报群:
 // https://t.me/Bybitapi
 
+type config struct {
+	baseURL   string
+	apiKey    string
+	secretKey string
+}
+
+var cfg config
+
+func initConfig() {
+	if cfg.baseURL == "" {
+		err := godotenv.Load(".env")
+		if err != nil {
+			log.Fatalf("Error loading .env file: %v", err)
+		}
+		cfg.baseURL = os.Getenv("BASE_URL")
+		cfg.apiKey = os.Getenv("API_KEY")
+		cfg.secretKey = os.Getenv("SECRET_KEY")
+	}
+}
+
 func newByBit() *ByBit {
-	//baseURL := "https://api.bybit.com/"
-	//baseURL := "https://api-testnet.bybit.com/"
-	baseURL := "https://api.bytick.com/"
-	apiKey := "6IASD6KDBdunn5qLpT"
-	secretKey := "nXjZMUiB3aMiPaQ9EUKYFloYNd0zM39RjRWF"
-	b := New(nil, baseURL, apiKey, secretKey, true)
+	initConfig()
+	b := New(nil, cfg.baseURL, cfg.apiKey, cfg.secretKey, true)
 	err := b.SetCorrectServerTime()
 	if err != nil {
 		log.Printf("%v", err)
@@ -346,9 +364,26 @@ func TestByBit_GetPositions(t *testing.T) {
 	t.Logf("%#v", positions)
 }
 
+func TestByBit_GetLinearPositions(t *testing.T) {
+	b := newByBit()
+	positions, err := b.GetLinearPositions()
+	assert.Nil(t, err)
+	t.Logf("%#v", positions)
+}
+
 func TestByBit_GetPosition(t *testing.T) {
 	b := newByBit()
 	position, err := b.GetPosition("BTCUSD")
 	assert.Nil(t, err)
 	t.Logf("%#v", position)
+}
+
+func TestByBit_GetLinearPosition(t *testing.T) {
+	b := newByBit()
+	long, short, err := b.GetLinearPosition("BTCUSDT")
+	assert.Nil(t, err)
+	assert.Equal(t, "BTCUSDT", long.Symbol)
+	assert.Equal(t, "BTCUSDT", short.Symbol)
+	t.Logf("%#v", long)
+	t.Logf("%#v", short)
 }

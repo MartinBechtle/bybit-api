@@ -12,3 +12,6 @@
 *.out
 
 .idea/
+
+# Env file with api keys for testing
+.env
