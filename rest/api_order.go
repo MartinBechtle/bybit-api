@@ -251,6 +251,58 @@ func (b *ByBit) getOrders(orderID string, orderLinkID string, sort string, order
 	return
 }
 
+// GetOrdersV2 returns up to 500 active limit orders, without lag (real-time)
+func (b *ByBit) GetOrdersV2(orderID string, orderLinkID string, symbol string) (result []OrderV2, err error) {
+	var cResult OrderListV2Result
+
+	params := map[string]interface{}{}
+	params["symbol"] = symbol
+	if orderID != "" {
+		params["order_id"] = orderID
+	}
+	if orderLinkID != "" {
+		params["order_link_id"] = orderLinkID
+	}
+	var resp []byte
+	resp, err = b.SignedRequest(http.MethodGet, "v2/private/order", params, &cResult)
+	if err != nil {
+		return
+	}
+	if cResult.RetCode != 0 {
+		err = fmt.Errorf("%v body: [%v]", cResult.RetMsg, string(resp))
+		return
+	}
+
+	result = cResult.Result
+	return
+}
+
+// GetOrdersV2 returns up to 50 active conditional orders, without lag (real-time)
+func (b *ByBit) GetStopOrdersV2(orderID string, orderLinkID string, symbol string) (result []StopOrderV2, err error) {
+	var cResult StopOrderListV2Result
+
+	params := map[string]interface{}{}
+	params["symbol"] = symbol
+	if orderID != "" {
+		params["stop_order_id"] = orderID
+	}
+	if orderLinkID != "" {
+		params["order_link_id"] = orderLinkID
+	}
+	var resp []byte
+	resp, err = b.SignedRequest(http.MethodGet, "v2/private/stop-order", params, &cResult)
+	if err != nil {
+		return
+	}
+	if cResult.RetCode != 0 {
+		err = fmt.Errorf("%v body: [%v]", cResult.RetMsg, string(resp))
+		return
+	}
+
+	result = cResult.Result
+	return
+}
+
 // GetStopOrders 查询条件委托单
 // orderID: 条件委托单ID
 // orderLinkID: 机构自定义订单ID

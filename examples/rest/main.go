@@ -6,36 +6,16 @@ import (
 )
 
 func main() {
-	//baseURL := "https://api.bybit.com/"	// 主网络
-	baseURL := "https://api-testnet.bybit.com/" // 测试网络
+	baseURL := "https://api.bybit.com/"
 	b := rest.New(nil,
-		baseURL, "YIxOY2RhFkylPudq96", "Bg9G2oFOb3aaIMguD3FOvOJJVBycaoXqXNcI",
+		baseURL, "apiKey", "secret",
 		true)
 
-	// 获取持仓
-	positions, err := b.GetPositions()
+	orders, err := b.GetStopOrdersV2("", "", "BTCUSD")
 	if err != nil {
 		log.Printf("%v", err)
 		return
 	}
 
-	log.Printf("positions: %#v", positions)
-
-	// 创建委托
-	symbol := "BTCUSD"
-	side := "Buy"
-	orderType := "Limit"
-	qty := 30
-	price := 7000.0
-	timeInForce := "GoodTillCancel"
-	reduceOnly := false
-	order, err := b.CreateOrder(side,
-		orderType, price, qty, timeInForce, reduceOnly, symbol)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	log.Printf("Create order: %#v", order)
-
-	// 获取委托单
+	log.Printf("orders: %#v", orders)
 }

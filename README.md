@@ -1,5 +1,5 @@
 # ByBit API Golang SDK
-Fork of [frankrap's implementation](https://github.com/frankrap/bybit-api) which essential bugfixes.
+Fork of [frankrap's implementation](https://github.com/frankrap/bybit-api) with essential bugfixes.
 
 ## How to use
 Refer to the original project README
