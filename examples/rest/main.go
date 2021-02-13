@@ -8,14 +8,20 @@ import (
 func main() {
 	baseURL := "https://api.bybit.com/"
 	b := rest.New(nil,
-		baseURL, "apiKey", "secret",
+		baseURL, "", "",
 		true)
 
-	orders, err := b.GetStopOrdersV2("", "", "BTCUSD")
+	//orders, err := b.GetOrdersV2("", "", "BTCUSD")
+	//if err != nil {
+	//	log.Printf("%v", err)
+	//	return
+	//}
+
+	tickers, err := b.GetTicker("BTCUSD")
 	if err != nil {
 		log.Printf("%v", err)
 		return
 	}
 
-	log.Printf("orders: %#v", orders)
+	log.Printf("result: %#v", tickers)
 }

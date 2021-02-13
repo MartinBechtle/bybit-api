@@ -101,6 +101,24 @@ func (b *ByBit) GetTickers() (result []Ticker, err error) {
 	return
 }
 
+
+
+// GetTickers retrieves a single inverse or linear swap ticker
+func (b *ByBit) GetTicker(symbol string) (result []Ticker, err error) {
+	// https://api-testnet.bybit.com/v2/public/tickers
+	var ret GetTickersResult
+	params := map[string]interface{}{}
+	if symbol != "" {
+		params["symbol"] = symbol
+	}
+	_, err = b.PublicRequest(http.MethodGet, "v2/public/tickers", params, &ret)
+	if err != nil {
+		return
+	}
+	result = ret.Result
+	return
+}
+
 // from: From ID. Default: return latest data
 // limit: Number of results. Default 500; max 1000
 func (b *ByBit) GetTradingRecords(symbol string, from int64, limit int) (result []TradingRecord, err error) {
