@@ -504,7 +504,8 @@ type QueryOrderResult struct {
 }
 
 type StopOrderV2 struct {
-	ClOrdID           string       `json:"clOrdID"`
+	OrderID           string       `json:"order_id"`
+	OrderLinkID       string       `json:"order_link_id"`
 	UserID            int64        `json:"user_id"`
 	Symbol            string       `json:"symbol"`
 	Side              string       `json:"side"`

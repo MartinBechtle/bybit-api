@@ -167,7 +167,7 @@ func TestByBit_CreateOrderV2_Market_ETHUSD(t *testing.T) {
 	symbol := "ETHUSD"
 	side := "Buy"
 	orderType := "Market"
-	qty := 1
+	qty := 1.
 	timeInForce := "GoodTillCancel"
 	order, err := b.CreateOrderV2(
 		side,

@@ -8,7 +8,7 @@ import (
 )
 
 func (b *ByBit) CreateOrderV2(side string, orderType string, price float64,
-	qty int, timeInForce string, takeProfit float64, stopLoss float64, reduceOnly bool,
+	qty float64, timeInForce string, takeProfit float64, stopLoss float64, reduceOnly bool,
 	closeOnTrigger bool, orderLinkID string, symbol string) (result OrderV2, err error) {
 	var cResult CreateOrderV2Result
 	params := map[string]interface{}{}
