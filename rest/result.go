@@ -511,6 +511,7 @@ type StopOrderV2 struct {
 	Side              string       `json:"side"`
 	OrderType         string       `json:"order_type"`
 	Price             sjson.Number `json:"price"`
+	StopPrice         sjson.Number `json:"stop_px"`
 	Qty               float64      `json:"qty"`
 	TimeInForce       string       `json:"time_in_force"`
 	CreateType        string       `json:"create_type"`

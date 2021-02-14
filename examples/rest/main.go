@@ -1,29 +1,30 @@
 package main
 
 import (
-	"github.com/MartinBechtle/bybit-api/rest"
 	"log"
-	"github.com/google/uuid"
+	"os"
+
+	"github.com/MartinBechtle/bybit-api/rest"
 )
 
 func main() {
 	baseURL := "https://api.bybit.com/"
 	b := rest.New(nil,
-		baseURL, "", "",
+		baseURL, os.Getenv("API_KEY"), os.Getenv("API_SECRET"),
 		true)
 
-	//orders, err := b.GetOrdersV2("", "", "BTCUSD")
-	//if err != nil {
-	//	log.Printf("%v", err)
-	//	return
-	//}
-
-	orderId := uuid.New().String()
-	order, err := b.CreateOrderV2("Buy", "Limit", 46000, 10., "PostOnly", 49000, 45000, false, false, orderId, "BTCUSD")
+	orders, err := b.GetStopOrdersV2("", "", "BTCUSD")
 	if err != nil {
 		log.Printf("%v", err)
 		return
 	}
 
-	log.Printf("result: %#v", order)
+	//orderId := uuid.New().String()
+	//order, err := b.CreateOrderV2("Buy", "Market", 0, 10., "PostOnly", 51000, 47000, false, false, orderId, "BTCUSD")
+	//if err != nil {
+	//	log.Printf("%v", err)
+	//	return
+	//}
+
+	log.Printf("result: %#v", orders)
 }
