@@ -13,7 +13,7 @@ func main() {
 		baseURL, os.Getenv("API_KEY"), os.Getenv("API_SECRET"),
 		true)
 
-	orders, err := b.GetStopOrdersV2("", "", "BTCUSD")
+	orders, err := b.GetOrderV2("410025c8-3e73-4db2-9161-a332439e42b4", "", "BTCUSD")
 	if err != nil {
 		log.Printf("%v", err)
 		return

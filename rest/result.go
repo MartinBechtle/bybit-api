@@ -246,6 +246,15 @@ type OrderListV2Result struct {
 	RateLimitStatus int       `json:"rate_limit_status"`
 }
 
+type OrderV2Result struct {
+	RetCode         int     `json:"ret_code"`
+	RetMsg          string  `json:"ret_msg"`
+	ExtCode         string  `json:"ext_code"`
+	Result          OrderV2 `json:"result"`
+	TimeNow         string  `json:"time_now"`
+	RateLimitStatus int     `json:"rate_limit_status"`
+}
+
 type StopOrderListV2Result struct {
 	RetCode         int           `json:"ret_code"`
 	RetMsg          string        `json:"ret_msg"`

@@ -252,17 +252,11 @@ func (b *ByBit) getOrders(orderID string, orderLinkID string, sort string, order
 }
 
 // GetOrdersV2 returns up to 500 active limit orders, without lag (real-time)
-func (b *ByBit) GetOrdersV2(orderID string, orderLinkID string, symbol string) (result []OrderV2, err error) {
+func (b *ByBit) GetOrdersV2(symbol string) (result []OrderV2, err error) {
 	var cResult OrderListV2Result
 
 	params := map[string]interface{}{}
 	params["symbol"] = symbol
-	if orderID != "" {
-		params["order_id"] = orderID
-	}
-	if orderLinkID != "" {
-		params["order_link_id"] = orderLinkID
-	}
 	var resp []byte
 	resp, err = b.SignedRequest(http.MethodGet, "v2/private/order", params, &cResult)
 	if err != nil {
@@ -275,6 +269,35 @@ func (b *ByBit) GetOrdersV2(orderID string, orderLinkID string, symbol string) (
 
 	result = cResult.Result
 	return
+}
+
+// GetOrderV2 returns a specific order
+func (b *ByBit) GetOrderV2(orderID string, orderLinkID string, symbol string) (*OrderV2, error) {
+	if orderID == "" && orderLinkID == "" {
+		return nil, fmt.Errorf("either orderID or orderLinkID must be provided")
+	}
+	var cResult OrderV2Result
+
+	params := map[string]interface{}{}
+	params["symbol"] = symbol
+	if orderID != "" {
+		params["order_id"] = orderID
+	}
+	if orderLinkID != "" {
+		params["order_link_id"] = orderLinkID
+	}
+	var resp []byte
+	resp, err := b.SignedRequest(http.MethodGet, "v2/private/order", params, &cResult)
+	if err != nil {
+		return nil, err
+	}
+	if cResult.RetCode == 20001 {
+		return nil, nil // order not found
+	}
+	if cResult.RetCode != 0 {
+		return nil, fmt.Errorf("%v body: [%v]", cResult.RetMsg, string(resp))
+	}
+	return &cResult.Result, nil
 }
 
 // GetOrdersV2 returns up to 50 active conditional orders, without lag (real-time)
